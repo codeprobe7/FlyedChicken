@@ -48,12 +48,13 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        //float h = Input.GetAxisRaw("Horizontal");
-        //if (h != 0f)
-        //{
-        //    StickLeftContorll(h);
-        //}
-        //else anim.SetBool("walking", false);
+        RaycastHit hit;
+        Ray ray = new Ray(transform.position, Vector3.down);
+        if (Physics.Raycast(ray, 1f, LayerMask.GetMask("Ground")))
+        {
+            isOnGround = true;
+        }
+        else isOnGround = false;
     }
 
     private void FixedUpdate() { }
@@ -116,15 +117,6 @@ public class PlayerController : MonoBehaviour
         anim.SetBool("readyToFly", readyToFly);
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.collider.CompareTag("Ground"))
-        {
-            if (Vector3.Magnitude(rb.velocity) <= 0.1f)
-                isOnGround = true;
-        }
-    }
-
     public void Launch()
     {
         Showindicator();
@@ -132,7 +124,6 @@ public class PlayerController : MonoBehaviour
         rb.AddExplosionForce(explosionforce, rocket.transform.position, explosionRadius, 0f, ForceMode.Impulse);
         jumpSound.Play();
         isReadyToFly = false;
-        isOnGround = false;
         Invoke("HideIndicator", 1f);
     }
 
