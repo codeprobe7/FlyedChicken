@@ -12,6 +12,7 @@ public class Lstick : Joystick, IPointerDownHandler, IDragHandler, IPointerUpHan
         Player = targetobj.GetComponent<PlayerController>();
     }
 
+    
     public void FixedUpdate()
     {
         if (Horizontal != 0f) Player.StickLeftContorll(Horizontal);
@@ -19,14 +20,12 @@ public class Lstick : Joystick, IPointerDownHandler, IDragHandler, IPointerUpHan
     }
     public override void OnPointerDown(PointerEventData eventData)
     {
-        if (PlayerController.isStickControlling) return;
         OnDrag(eventData);
     }
 
     public override void OnDrag(PointerEventData eventData)
     {
         base.OnDrag(eventData);
-        ;
     }
 
     public override void OnPointerUp(PointerEventData eventData)

@@ -29,12 +29,13 @@ public class PlayerController : MonoBehaviour
     public bool isReadyToFly = false;
     public bool isOnGround;
     public InputTypes inputType;
-    public static bool isStickControlling = false;
+    public bool isRightStickControlling = false;
 
     [Header("Sounds")]
     public AudioSource jumpSound;
 
     private Rigidbody rb;
+    private BoxCollider footCollsion;
     private Animator anim;
     
     // update
@@ -43,25 +44,29 @@ public class PlayerController : MonoBehaviour
         rocket.SetActive(true);
         HideIndicator();
         rb = transform.GetComponent<Rigidbody>();
+        footCollsion = transform.GetComponent<BoxCollider>();
         anim = transform.GetComponentInChildren<Animator>();
     }
 
     private void Update()
     {
-        RaycastHit hit;
-        Ray ray = new Ray(transform.position, Vector3.down);
-        if (Physics.Raycast(ray, 1f, LayerMask.GetMask("Ground")))
+        //Ray ray = new Ray(transform.position, Vector3.down);
+        //if (Physics.Raycast(ray, 1f, LayerMask.GetMask("Ground")))
+
+        float h = Input.GetAxisRaw("Horizontal");
+        if (h != 0f)
         {
-            isOnGround = true;
+            StickLeftContorll(h);
         }
-        else isOnGround = false;
+        else Animating(0f);
     }
 
     private void FixedUpdate() { }
 
     public void StickLeftContorll(float horizontal)
     {
-        isStickControlling = true;
+        if (isRightStickControlling) return;
+        if (isOnGround == false) return;
         Vector3 movement = new Vector3(horizontal, 0f, 0f);
         MoveCharacter(movement);
         Animating(horizontal);
@@ -70,11 +75,10 @@ public class PlayerController : MonoBehaviour
     public void StickleftControllEnd()
     {
         Animating(0f);
-        isStickControlling = false;
     }
     public void StickRightControll(Vector3 direction)
     {
-        isStickControlling = true;
+        isRightStickControlling = true;
         if (isOnGround)
         {
             indicator.gameObject.SetActive(true);
@@ -83,12 +87,13 @@ public class PlayerController : MonoBehaviour
         explosionforce = Vector3.Magnitude(indicator.transform.position - transform.position);
         explosionforce *= powerMultiplier;
         isReadyToFly = true;
+        Animating(0f);
         Animating(isReadyToFly);
     }
     public void StickRightControllEnd()
     {
         if(isOnGround) Launch();
-        isStickControlling = false;
+        isRightStickControlling = false;
         isReadyToFly = false;
         Animating(isReadyToFly);
     }
@@ -119,6 +124,7 @@ public class PlayerController : MonoBehaviour
 
     public void Launch()
     {
+        Animating(0f);
         Showindicator();
         indicator.transform.position = transform.position;
         rb.AddExplosionForce(explosionforce, rocket.transform.position, explosionRadius, 0f, ForceMode.Impulse);
@@ -135,6 +141,21 @@ public class PlayerController : MonoBehaviour
     public void Showindicator()
     {
         indicator.gameObject.SetActive(true);
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        isOnGround = true;
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        isOnGround = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        isOnGround = false;
     }
 
 }

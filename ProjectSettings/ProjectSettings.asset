@@ -259,7 +259,7 @@ PlayerSettings:
   AndroidTargetArchitectures: 3
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: D:/KeyStore/FlyedChicken.keystore
+  AndroidKeystoreName: C:/Users/codep/OneDrive/KeyStore/FlyedChicken.keystore
   AndroidKeyaliasName: upload
   AndroidBuildApkPerCpuArchitecture: 0
   AndroidTVCompatibility: 0
